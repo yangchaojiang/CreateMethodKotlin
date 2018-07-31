@@ -42,7 +42,8 @@ class GenearatorAction : BaseGenerateAction {
         // 获取元素操作的工厂类
         val dialog = EditDialog { beam -> IWriter(project, psiFile, targetClass!!, beam).execute() }
         dialog.pack()
-        dialog.setSize(400, 250)
+        dialog.setTitle("创建")
+        dialog.setSize(400, 310)
         val kit = Toolkit.getDefaultToolkit()    // 定义工具包
         val screenSize = kit.screenSize   // 获取屏幕的尺寸
         val screenWidth = screenSize.width / 2         // 获取屏幕的宽

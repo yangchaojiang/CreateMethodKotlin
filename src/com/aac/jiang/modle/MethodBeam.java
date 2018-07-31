@@ -6,6 +6,7 @@ public class MethodBeam {
     private  String  uriName;
      private  String keyName;
      private  int converterType=0;
+    private  int httpType=0;
     public String getMethodName() {
         return methodName;
     }
@@ -52,5 +53,13 @@ public class MethodBeam {
 
     public void setConverterType(int converterType) {
         this.converterType = converterType;
+    }
+
+    public int getHttpType() {
+        return httpType;
+    }
+
+    public void setHttpType(int httpType) {
+        this.httpType = httpType;
     }
 }

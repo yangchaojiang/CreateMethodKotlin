@@ -16,6 +16,7 @@ public class EditDialog extends JDialog {
     private JTextField textFieldUri;
     private JComboBox comboBoxRxType;
     private JTextField textField1Key;
+    private JComboBox comboBox1;
 
     private CallBack callBack;
     public EditDialog(CallBack callBack) {
@@ -71,7 +72,8 @@ public class EditDialog extends JDialog {
         methodBeam.setBeanSName(textFieldBean.getText().trim());
         methodBeam.setUriName(textFieldUri.getText().trim());
         methodBeam.setRxType(comboBoxRxType.getSelectedIndex());
-        methodBeam.setMethodName(textFieldBean.getText().trim());
+        methodBeam.setMethodName(textFieldMedthod.getText().trim());
+        methodBeam.setHttpType(comboBox1.getSelectedIndex());
         callBack.callBack(methodBeam);
         dispose();
     }
@@ -91,7 +93,7 @@ public class EditDialog extends JDialog {
             }
         });
         dialog.pack();
-        dialog.setSize(400, 250);
+        dialog.setSize(400, 300);
         Toolkit kit = Toolkit.getDefaultToolkit();    // 定义工具包
         Dimension screenSize = kit.getScreenSize();   // 获取屏幕的尺寸
         int screenWidth = screenSize.width / 2;         // 获取屏幕的宽

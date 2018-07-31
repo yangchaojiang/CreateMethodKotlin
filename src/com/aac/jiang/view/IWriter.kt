@@ -41,34 +41,40 @@ class IWriter(protected var mProject: Project, protected var mFile: PsiFile, pro
             if (methodBeam.rxType == 0) {
                 creatIntentSB.append("LiveData<")
                 creatIntentSB.append(methodBeam.beanSName)
-                creatIntentSB.append(">")
+                creatIntentSB.append(">{\n")
+                creatIntentSB.append("val params = HttpParams()\n")
+                creatIntentSB.append("params.put(\"string\", string)")
+                if(methodBeam.httpType==0){
+                    creatIntentSB.append("\n\t return httpLiveGet<")
+                }else{
+                    creatIntentSB.append("\n\t return httpLivePost<")
+                }
             } else {
                 creatIntentSB.append("Flowable<")
                 creatIntentSB.append(methodBeam.beanSName)
                 creatIntentSB.append(">{\n")
+                creatIntentSB.append("val params = HttpParams()\n")
+                creatIntentSB.append("params.put(\"string\", string)")
+                if(methodBeam.httpType==0){
+                    creatIntentSB.append("\n\t return httpRxGet<")
+                }else{
+                    creatIntentSB.append("\n\t return httpRxPost<")
+                }
             }
-            creatIntentSB.append("{\n\t return OkGo.get<")
             creatIntentSB.append(methodBeam.beanSName)
             creatIntentSB.append(">(")
             creatIntentSB.append(methodBeam.uriName)
-            creatIntentSB.append(")\n.tag(context)\n")
-            creatIntentSB.append(".params(\"string\",string)\n")
+            creatIntentSB.append("\n,params,\n")
             if (methodBeam.converterType == 0) {//bean类型
-                creatIntentSB.append(".converter(BeanConverter(\"" + methodBeam.keyName + "\",")
+                creatIntentSB.append("BeanConverter(\"" + methodBeam.keyName + "\",")
                 creatIntentSB.append(methodBeam.beanSName)
                 creatIntentSB.append("::class.java))\n")
             } else if (methodBeam.converterType == 1) {
-                creatIntentSB.append(".converter(BeanListConverters(\"\"+methodBeam.getKeyName()+\"\",")
+                creatIntentSB.append("BeanListConverters(\"\"+methodBeam.getKeyName()+\"\",")
                 creatIntentSB.append(methodBeam.beanSName)
                 creatIntentSB.append("::class.java))\n")
             } else {
-                creatIntentSB.append(".converter(JsonObjectConverter())\t")
-            }
-            if (methodBeam.rxType == 0) {
-                creatIntentSB.append(".adapt(LiveDataAdapter())")
-            } else {
-                creatIntentSB.append(".adapt(RxDataAdapter())\n")
-                creatIntentSB.append(".compose(defaultSchedulers())")
+                creatIntentSB.append("JsonObjectConverter())\t")
             }
             creatIntentSB.append("\n}")
             if (mClass.getBody() != null && mClass.getBody()!!.lastChild != null) {
@@ -80,13 +86,25 @@ class IWriter(protected var mProject: Project, protected var mFile: PsiFile, pro
                 }
             }
         }
-        insertImports(mClass.containingKtFile, "com.lzy.okgo.OkGo")
         insertImports(mClass.containingKtFile, "android.content.Context")
+        insertImports(mClass.containingKtFile, "com.lzy.okgo.model.HttpParams")
         if (methodBeam.rxType == 0) {
             insertImports(mClass.containingKtFile, "android.arch.lifecycle.LiveData")
+            if(methodBeam.httpType==0){
+                insertImports(mClass.containingKtFile, "com.aac.data.http.utils.httpLiveGet")
+            }else{
+                insertImports(mClass.containingKtFile, "com.aac.data.http.utils.httpLivePost")
+            }
         }else{
             insertImports(mClass.containingKtFile, "io.reactivex.Flowable")
-            insertImports(mClass.containingKtFile, "io.reactivex.functions.Function")
+            if(methodBeam.httpType==0){
+                insertImports(mClass.containingKtFile, "com.aac.data.http.utils.httpRxGet")
+            }else{
+                insertImports(mClass.containingKtFile, "com.aac.data.http.utils.httpRxPost")
+            }
+        }
+        if (methodBeam.converterType == 2) {
+            insertImports(mClass.containingKtFile, "com.aac.data.http.converter.JsonObjectConverter")
         }
     }
 
