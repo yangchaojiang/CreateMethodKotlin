@@ -17,6 +17,8 @@ public class EditDialog extends JDialog {
     private JComboBox comboBoxRxType;
     private JTextField textField1Key;
     private JComboBox comboBox1;
+    private JComboBox dataTypeChe;
+    private JLabel dataTypelabel;
 
     private CallBack callBack;
     public EditDialog(CallBack callBack) {
@@ -74,6 +76,7 @@ public class EditDialog extends JDialog {
         methodBeam.setRxType(comboBoxRxType.getSelectedIndex());
         methodBeam.setMethodName(textFieldMedthod.getText().trim());
         methodBeam.setHttpType(comboBox1.getSelectedIndex());
+        methodBeam.setConverterType(dataTypeChe.getSelectedIndex());
         callBack.callBack(methodBeam);
         dispose();
     }

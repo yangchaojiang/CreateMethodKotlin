@@ -35,46 +35,66 @@ class IWriter(protected var mProject: Project, protected var mFile: PsiFile, pro
         run {
             //onclick(v:View)
             val creatIntentSB = StringBuffer()
+            val creatIntentSB2 = StringBuffer()
+            when {
+                methodBeam.converterType == 0 -> //bean类型
+                    creatIntentSB2.append(methodBeam.beanSName)
+                methodBeam.converterType == 1 -> {
+                    creatIntentSB2.append("List<")
+                    creatIntentSB2.append(methodBeam.beanSName)
+                    creatIntentSB2.append(">")
+                }
+                else -> creatIntentSB2.append("JSONObject")
+            }
+            creatIntentSB2.append(">{\n")
+            creatIntentSB2.append("\tval params = HttpParams()\n")
+            creatIntentSB2.append("\tparams.put(\"string\", string)")
+            if (methodBeam.converterType == 1) {
+                creatIntentSB2.append("\n\tval typeReference =  object : TypeReference<List<")
+                creatIntentSB2.append(methodBeam.beanSName)
+                creatIntentSB2.append(">>() {}")
+            }
+
+            //方法开始
             creatIntentSB.append("fun ")
             creatIntentSB.append(methodBeam.methodName)
             creatIntentSB.append("(context: Context,string: String):")
             if (methodBeam.rxType == 0) {
                 creatIntentSB.append("LiveData<")
-                creatIntentSB.append(methodBeam.beanSName)
-                creatIntentSB.append(">{\n")
-                creatIntentSB.append("val params = HttpParams()\n")
-                creatIntentSB.append("params.put(\"string\", string)")
-                if(methodBeam.httpType==0){
+                creatIntentSB.append(creatIntentSB2.toString())
+                if (methodBeam.httpType == 0) {
                     creatIntentSB.append("\n\t return httpLiveGet<")
-                }else{
+                } else {
                     creatIntentSB.append("\n\t return httpLivePost<")
                 }
             } else {
                 creatIntentSB.append("Flowable<")
-                creatIntentSB.append(methodBeam.beanSName)
-                creatIntentSB.append(">{\n")
-                creatIntentSB.append("val params = HttpParams()\n")
-                creatIntentSB.append("params.put(\"string\", string)")
-                if(methodBeam.httpType==0){
+                creatIntentSB.append(creatIntentSB2.toString())
+                if (methodBeam.httpType == 0) {
                     creatIntentSB.append("\n\t return httpRxGet<")
-                }else{
+                } else {
                     creatIntentSB.append("\n\t return httpRxPost<")
                 }
             }
             creatIntentSB.append(methodBeam.beanSName)
             creatIntentSB.append(">(")
             creatIntentSB.append(methodBeam.uriName)
-            creatIntentSB.append("\n,params,\n")
-            if (methodBeam.converterType == 0) {//bean类型
-                creatIntentSB.append("BeanConverter(\"" + methodBeam.keyName + "\",")
-                creatIntentSB.append(methodBeam.beanSName)
-                creatIntentSB.append("::class.java))\n")
-            } else if (methodBeam.converterType == 1) {
-                creatIntentSB.append("BeanListConverters(\"\"+methodBeam.getKeyName()+\"\",")
-                creatIntentSB.append(methodBeam.beanSName)
-                creatIntentSB.append("::class.java))\n")
-            } else {
-                creatIntentSB.append("JsonObjectConverter())\t")
+            creatIntentSB.append("\n\t\t\t,params,\n")
+            when {
+                methodBeam.converterType == 0 -> {//bean类型
+                    creatIntentSB.append("\t\t\tBeanConverter(")
+                    creatIntentSB.append(methodBeam.keyName)
+                    creatIntentSB.append(",")
+                    creatIntentSB.append(methodBeam.beanSName)
+                    creatIntentSB.append("::class.java))\n")
+                }
+                methodBeam.converterType == 1 -> {
+                    creatIntentSB.append("\t\t\tBeanConverter(")
+                    creatIntentSB.append(methodBeam.keyName)
+                    creatIntentSB.append(",")
+                    creatIntentSB.append("typeReference.type))\n")
+                }
+                else -> creatIntentSB.append("\t\t\tJsonObjectConverter())\t")
             }
             creatIntentSB.append("\n}")
             if (mClass.getBody() != null && mClass.getBody()!!.lastChild != null) {
@@ -86,25 +106,33 @@ class IWriter(protected var mProject: Project, protected var mFile: PsiFile, pro
                 }
             }
         }
+        addImports()
+    }
+
+    //添加引用路径
+    fun addImports() {
         insertImports(mClass.containingKtFile, "android.content.Context")
         insertImports(mClass.containingKtFile, "com.lzy.okgo.model.HttpParams")
         if (methodBeam.rxType == 0) {
             insertImports(mClass.containingKtFile, "android.arch.lifecycle.LiveData")
-            if(methodBeam.httpType==0){
+            if (methodBeam.httpType == 0) {
                 insertImports(mClass.containingKtFile, "com.aac.data.http.utils.httpLiveGet")
-            }else{
+            } else {
                 insertImports(mClass.containingKtFile, "com.aac.data.http.utils.httpLivePost")
             }
-        }else{
+        } else {
             insertImports(mClass.containingKtFile, "io.reactivex.Flowable")
-            if(methodBeam.httpType==0){
+            if (methodBeam.httpType == 0) {
                 insertImports(mClass.containingKtFile, "com.aac.data.http.utils.httpRxGet")
-            }else{
+            } else {
                 insertImports(mClass.containingKtFile, "com.aac.data.http.utils.httpRxPost")
             }
         }
         if (methodBeam.converterType == 2) {
             insertImports(mClass.containingKtFile, "com.aac.data.http.converter.JsonObjectConverter")
+            insertImports(mClass.containingKtFile, "com.alibaba.fastjson.JSONObject")
+        } else if (methodBeam.converterType == 1) {
+            insertImports(mClass.containingKtFile, "com.alibaba.fastjson.TypeReference")
         }
     }
 

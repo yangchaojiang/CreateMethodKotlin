@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.yang.chaojiang</id>
   <name>KotlinCreateMethod</name>
-  <version>1.8.6</version>
+  <version>2.0.3</version>
   <vendor email="1007181167@qq.com" url="https://github.com/yangchaojiang">yangchaojiang</vendor>
   <description><![CDATA[
       Enter short description for your plugin here.<br>
@@ -32,7 +32,14 @@
     <action id="com.yangchaojiang" class="com.aac.jiang.GenearatorAction" text="CreateMethodKotlin"
             description="CreateMethodKotlin">
       <add-to-group group-id="GenerateGroup" anchor="first"/>
+
     </action>
+
+    <action id="com.aac.jiang.java" class="com.aac.jiang.CreateMethodJava" text="CreateMethodJava"
+            description="CreateMethodJava">
+      <add-to-group group-id="JavaGenerateGroup1" anchor="last"/>
+    </action>
+
   </actions>
 
 </idea-plugin>

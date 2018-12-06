@@ -1,5 +1,7 @@
 package cn.yzl.kotlin.ex.click.util
 
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
@@ -26,4 +28,6 @@ object KtUtils {
         ImportInsertHelper.getInstance(ktFile.project)
                 .importDescriptor(ktFile, ktFile.resolveImportReference(FqName(path)).iterator().next(), false)
     }
+
+
 }

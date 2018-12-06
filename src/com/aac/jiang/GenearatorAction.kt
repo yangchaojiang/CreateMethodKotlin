@@ -22,9 +22,9 @@ import java.awt.Toolkit
 class GenearatorAction : BaseGenerateAction {
 
 
-    constructor() : super(null) {}
+    constructor() : super(null)
 
-    constructor(handler: CodeInsightActionHandler) : super(handler) {}
+    constructor(handler: CodeInsightActionHandler) : super(handler)
 
     override fun isValidForFile(project: Project, editor: Editor, file: PsiFile): Boolean {
         return file.name.endsWith(".kt")
@@ -43,7 +43,7 @@ class GenearatorAction : BaseGenerateAction {
         val dialog = EditDialog { beam -> IWriter(project, psiFile, targetClass!!, beam).execute() }
         dialog.pack()
         dialog.setTitle("创建")
-        dialog.setSize(400, 310)
+        dialog.setSize(450, 390)
         val kit = Toolkit.getDefaultToolkit()    // 定义工具包
         val screenSize = kit.screenSize   // 获取屏幕的尺寸
         val screenWidth = screenSize.width / 2         // 获取屏幕的宽
